@@ -32,18 +32,18 @@ public class SettingsActivity extends AppCompatActivity {
                 if (picturesName.isEmpty()){
                     Toast.makeText(getApplicationContext(), "! Не заполнено наименование файла картинки для фона !", Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.i("img_fromfile", "заполнено наименование файла");
 
                     final File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), picturesName);
+                    Log.i("img_fromfile", "В каталоге " + Environment.DIRECTORY_DOWNLOADS + " найден файл с наименованием  " + picturesName);
+                    Log.i("img_fromfile", "file.getAbsolutePath() =  " + file.getAbsolutePath());
 
                     if (file.exists()) {
                         Intent intent = new Intent();
                         intent.putExtra("fileAbsolutePath", file.getAbsolutePath());
-                        //intent.putExtra("fileAbsolutePath", picturesName);
                         setResult(RESULT_OK, intent);
                         finish();
                     } else {
-                       Log.i("img_fromfile", "file.exists() NO");
+                       Log.i("img_fromfile", "В каталоге " + Environment.DIRECTORY_DOWNLOADS + " нет  файла с наименованием  " + picturesName);
                         Toast.makeText(SettingsActivity.this, "В каталоге " + Environment.DIRECTORY_DOWNLOADS + " нет  файла с наименованием  " + picturesName , Toast.LENGTH_SHORT).show();
                     }
 

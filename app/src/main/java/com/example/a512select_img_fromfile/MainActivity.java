@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -33,9 +34,6 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-
-
-
 
 
     }
@@ -74,80 +72,29 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static Bitmap getImageFromIntent(@NonNull Intent intent) {
-        String imagePath = intent.getStringExtra("name");
-        return BitmapFactory.decodeFile(Objects.requireNonNull(imagePath));
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data == null) {return;}
-        String fileAbsolutePath = data.getStringExtra("fileAbsolutePath");
-        if(!fileAbsolutePath.isEmpty()){
-            Toast.makeText(this,  "Не найден Файл картинки для фона : " + fileAbsolutePath, Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this,  "Файл картинки для фона : " + fileAbsolutePath, Toast.LENGTH_LONG).show();
-
-            Bitmap imageFromIntent = this.getIntent().getParcelableExtra("bmp");
-            ImageView imageView2 = findViewById(R.id.imageView2);
-            imageView2.getDrawable();
-
-        }
-
-//        if (data != null) {
-//            Bitmap imageFromIntent = this.getIntent().getParcelableExtra("bmp");
-//            ImageView backImage = findViewById(R.id.ImageViewBack);
-//            backImage.setImageBitmap(imageFromIntent);
-//        }
+        loadImg(data.getStringExtra("fileAbsolutePath"));
     }
 
-
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_CODE_PERMISSION_READ_STORAGE:
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission granted
-                    loadImg();
-                } else {
-                    // permission denied
-                }
-                return;
-        }
-    }
-
-
-
-
-    private void loadImg() {
-
-        ImageView view = findViewById(R.id.imageView2);
+    private void loadImg(String fileAbsolutePath) {
+        ImageView imageView = findViewById(R.id.imageView);
+        TextView textView = findViewById(R.id.textView);
         if (isExternalStorageWritable()) {
-
 //            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "1.jpg");
+//            File file = new File(getApplicationContext().getExternalFilesDir(null),"1.jpg");  //getExternalFilesDir  папка для доступа приложения
+            fileAbsolutePath = "/sdcard/Download/1.jpg";
+            Bitmap b = BitmapFactory.decodeFile(fileAbsolutePath);
+            imageView.setImageBitmap(b);
+            //textView.setText(fileAbsolutePath.toString() + " \n  " + fileAbsolutePath);
 
-            File file = new File(getApplicationContext().getExternalFilesDir(null),"1.jpg");  //getExternalFilesDir  папка для доступа приложения
-
-            Bitmap b = BitmapFactory.decodeFile(file.getAbsolutePath());
-            view.setImageBitmap(b);
-            Toast.makeText(this, file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, " все ОК Bitmap b = " + fileAbsolutePath, Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(this, "File Error", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "File Error isExternalStorageWritable", Toast.LENGTH_LONG).show();
         }
 
-        Toast.makeText(this, getApplicationContext().getExternalFilesDir(null).toString(), Toast.LENGTH_LONG).show();
 
-        File logFile = new File(getApplicationContext().getExternalFilesDir(null),"log.txt");
-        try {
-            FileWriter logWriter = new FileWriter(logFile);
-            logWriter.append("App loaded");
-            logWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
     }
 
@@ -159,6 +106,34 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_PERMISSION_READ_STORAGE:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission granted
+                    Toast.makeText(this, " ДОступ к файлам открыт. Повторите ваше действие", Toast.LENGTH_LONG).show();
+
+//                    Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+//                    startActivityForResult(intent, 1);
+                } else {
+                    // permission denied
+                }
+                return;
+        }
+    }
+
+
+
+
+
+
+
+
 
 
 
